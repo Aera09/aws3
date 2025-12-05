@@ -1,70 +1,17 @@
-#OPTIMIZER
-    import numpy as np
-    import pandas as pd
-    import time
-    import matplotlib.pyplot as plt
-    from tensorflow.keras.datasets import mnist
-    from tensorflow.keras.models import Sequential
-    from tensorflow.keras.layers import Flatten, Dense
-    from tensorflow.keras.utils import to_categorical
-    from tensorflow.keras.optimizers import SGD, Adam, RMSprop, Adagrad
+# Program to display numbers from 1 to 100
+# Skip numbers divisible by 5
+# Stop if number > 80
+# Use pass where needed
 
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    x_train, x_test = x_train / 255.0, x_test / 255.0
-    y_train_cat = to_categorical(y_train, 10)
-    y_test_cat = to_categorical(y_test, 10)
-    def build_model():
-        return Sequential([
-            Flatten(input_shape=(28, 28)),
-            Dense(128, activation='relu'),
-            Dense(64, activation='relu'),
-            Dense(10, activation='softmax')
-        ]) 
+for num in range(1, 101):
 
-    optimizers = {
-        "SGD": SGD(),
-        "Adam": Adam(),
-        "RMSprop": RMSprop(),
-        "Adagrad": Adagrad()
-    }
+    if num == 1:
+        pass    # pass used here as a placeholder, no action needed
 
-    results = []
-    histories = {}
+    if num % 5 == 0:   # Skip numbers divisible by 5
+        continue
 
-    for name, opt in optimizers.items():
-        model = build_model()
-        model.compile(opt, loss='categorical_crossentropy', metrics=['accuracy'])
-        start = time.time()
-        history = model.fit(x_train, y_train_cat, epochs=10, batch_size=128, verbose=0, validation_split=0.1)
-        duration = round(time.time() - start, 2)
-        test_acc = model.evaluate(x_test, y_test_cat, verbose=0)[1]
-        results.append({"Optimizer": name, "Test Accuracy": test_acc, "Time (s)": duration})
-        histories[name] = history.history
+    if num > 80:       # Stop the loop
+        break
 
-    plt.figure(figsize=(14, 6))
-    plt.subplot(1, 2, 1)
-    for name, hist in histories.items():
-        plt.plot(hist['accuracy'], linestyle='--', label=f"{name} train")
-        plt.plot(hist['val_accuracy'], label=f"{name} val")
-    plt.title("Accuracy")
-    plt.legend()
-
-    plt.subplot(1, 2, 2)
-    for name, hist in histories.items():
-        plt.plot(hist['loss'], linestyle='--', label=f"{name} train")
-        plt.plot(hist['val_loss'], label=f"{name} val")
-    plt.title("Loss")
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-    y_pred = np.argmax(model.predict(x_test), axis=1)
-
-    plt.figure(figsize=(10, 10))
-    for i in range(25):
-        plt.subplot(5, 5, i + 1)
-        plt.imshow(x_test[i], cmap='gray')
-        plt.title(f"Pred:{y_pred[i]} Act:{y_test[i]}",color = 'green' if y_pred[i]==y_test[i] else 'red')
-        plt.axis('off')
-    plt.tight_layout()
-    plt.show()
+    print(num)
